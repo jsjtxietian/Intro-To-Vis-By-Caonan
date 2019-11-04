@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
-import data from '../Data/countries_of_world.csv';
 import './D3.css'
 
 //todo
@@ -8,7 +7,7 @@ import './D3.css'
 //2. convert to hooks
 
 const Countries = ["Asia", "Europe", "Africa", "SouthAmerica", "Oceania", "NorthAmerica"];
-
+ 
 
 class D3 extends Component {
 
@@ -18,13 +17,9 @@ class D3 extends Component {
 		this.state = {
 			size: [600, 600],
 			color: d3.scaleOrdinal(d3.schemeTableau10),
-			x_attr: "Birth Rate",
-			y_attr: "Death Rate",
 			xBias: 60,
-			data: null,
 			xScale: null,
 			yScale: null,
-			color: d3.scaleOrdinal(d3.schemeTableau10)
 		};
 
 		this.drawAll = this.drawAll.bind(this);
@@ -39,7 +34,7 @@ class D3 extends Component {
 
 		let formatPercent = d3.format(".2%");
 
-		let xMax = d3.extent(this.state.data, function (d) {
+		let xMax = d3.extent(this.props.data, function (d) {
 			return parseFloat(d[x])
 		})[1];
 		/**specify scale**/
@@ -47,7 +42,7 @@ class D3 extends Component {
 			.domain([0, xMax])
 			.range([this.state.xBias, this.state.size[0]]);
 
-		let yMax = d3.extent(this.state.data, function (d) {
+		let yMax = d3.extent(this.props.data, function (d) {
 			return parseFloat(d[y])
 		})[1];
 		this.state.yScale = d3.scaleLinear()
@@ -106,7 +101,7 @@ class D3 extends Component {
 
 		/**initiate data binding */
 		let plotEnter = plot.selectAll("circle")
-			.data(this.state.data, function (d) { return d["Country"] })
+			.data(this.props.data, function (d) { return d["Country"] })
 			.enter();
 
 		/**Append circle according to data */
@@ -175,29 +170,23 @@ class D3 extends Component {
 	}
 
 	drawAll(d) {
-		// console.log(this);
-		this.setState({
-			data: d
-		});
-
 		this.createSVG();
-		this.drawAxes(this.state.x_attr, this.state.y_attr);
-		this.drawDataPoints(this.state.x_attr, this.state.y_attr);
+		this.drawAxes(this.props.x_attr, this.props.y_attr);
+		this.drawDataPoints(this.props.x_attr, this.props.y_attr);
 		this.beautify();
 		this.bindEvents();
 	};
 
 	componentDidMount() {
-		d3.csv(data).then((d) => {
-			// console.log(d);
-			this.drawAll(d);
-		}).catch(function (error) {
-			console.log(error);
-		});
+		this.drawAll(this.props.data);
 	}
 
+	componentDidUpdate(prevProps, prevState) {
+		this.drawAll(this.props.data);
+	}
+	
+
 	render() {
-		// console.log("render enter");
 		return <div className="main_div" ref="main_div" ></div>
 	}
 }
