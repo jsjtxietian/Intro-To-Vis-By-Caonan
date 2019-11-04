@@ -1,0 +1,26 @@
+.main_div{
+  width:800px;
+  height:650px;
+  border:solid 1px black;
+  padding:10px;
+  font-family: 'Times New Roman', Times, serif;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.axis text{
+  fill:black;
+}
+
+#country_name{
+  fill:black;
+}
+
+circle:hover{
+  stroke:black;
+  stroke-width:2px;
+}
+
+.axistext{
+  font-size: 12pt;
+}
