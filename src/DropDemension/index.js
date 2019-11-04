@@ -12,7 +12,8 @@ class DropDemension extends Component {
 		}
 
 		this.onClick = ({ key }) => {
-			message.info(`Click on item ${key}`);
+			// message.info(`Click on item ${key}`);
+			this.props.setAppKey(key,this.props.pos);
 			this.setState({
 				currentKey: key,
 			})

@@ -21,6 +21,7 @@ class App extends Component {
 		};
 
 		this.cleanData = this.cleanData.bind(this);
+		this.changeKey = this.changeKey.bind(this);
 
 		d3.csv(data).then((d) => {
 			this.cleanData(d);
@@ -28,6 +29,19 @@ class App extends Component {
 		}).catch(function (error) {
 			console.log(error);
 		});
+	}
+
+	changeKey(key,pos){
+		if(pos === "X"){
+			this.setState({
+				leftKey:key
+			})
+		}
+		else{
+			this.setState({
+				rightKey:key
+			})
+		}
 	}
 
 	cleanData(rawData) {
@@ -56,10 +70,13 @@ class App extends Component {
 
 		if (this.state.dataLoaded) {
 			return (<>
+				<p className="title">
+					This is the scatterpot of <strong>{this.state.leftKey}</strong> and <strong>{this.state.rightKey} </strong>
+				</p>
 				<D3 />
 				<div className="Axis">
-				<DropDemension keyName={this.state.keyName} current={this.state.leftKey} pos="X"/>
-				<DropDemension keyName={this.state.keyName} current={this.state.rightKey} pos="Y"/>
+				<DropDemension keyName={this.state.keyName} current={this.state.leftKey} pos="X" setAppKey={this.changeKey}/>
+				<DropDemension keyName={this.state.keyName} current={this.state.rightKey} pos="Y"setAppKey={this.changeKey} />
 				</div>
 			</>
 			);

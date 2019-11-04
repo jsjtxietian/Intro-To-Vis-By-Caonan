@@ -1,8 +1,10 @@
 .AxisFont{
     color: black;
     font-weight: bold;
+    font-size: 18pt;
 }
 
 .AxisDropDown{
     margin: 0px 20px 0px 5px;
+    font-size: 18pt;
 }
