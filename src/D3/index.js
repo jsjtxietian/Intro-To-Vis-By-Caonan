@@ -156,8 +156,8 @@ class D3 extends Component {
 				/*move and set name tag */
 				d3.select("#country_name")
 					.text(d['Country'])
-					.attr("x", this.state.xScale(d[this.state.x_attr]))
-					.attr("y", this.state.yScale(d[this.state.y_attr]) - 10);
+					.attr("x", this.state.xScale(d[this.props.x_attr]))
+					.attr("y", this.state.yScale(d[this.props.y_attr]) - 10);
 			})
 			.on("mouseout", function (d) {
 				d3.select("#country_name").text("");

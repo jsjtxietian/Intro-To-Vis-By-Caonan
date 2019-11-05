@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import DropDemension from '../DropDemension/'
+import DropDemension from '../DropList/'
 import D3 from '../D3'
 import './App.css'
 import 'antd/dist/antd.css';
