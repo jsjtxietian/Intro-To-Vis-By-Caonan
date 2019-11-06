@@ -231,8 +231,7 @@ class D3 extends Component {
 			// d3.select("#main_svg")
 			// 	.append("div")
 			// 	.attr("id", "tooltip")
-			// 	.style("opacity", 0)
-			// 	.html("tooptip");
+			// 	.html("<p>tooltip</p>");
 		}
 		let x = this.props.x_attr;
 		let y = this.props.y_attr;
@@ -252,13 +251,10 @@ class D3 extends Component {
 					.attr("r", 10)
 					.style("opacity", 1);
 
-				// let div = d3.select("#tooltip");
-				// div.transition()
-				// 	.duration(200)
-				// 	.style("opacity", 0.9);
-				// div.html(d['Country'])
-				// 	.style("left", (d3.event.pageX) + "px")
-				// 	.style("top", (d3.event.pageY - 28) + "px");
+				// d3.select("#tooltip")
+				// 	.style("visibility", "visible")
+				// 	.style("top", (d3.mouse(this)[1]) + "px")
+				// 	.style("left", (d3.mouse(this)[0]) + "px");
 			})
 			.on("mouseout", function (d) {
 				d3.select("#country_name").text("");
@@ -269,10 +265,7 @@ class D3 extends Component {
 					.attr("r", 5)
 					.style("opacity", normalOpacity);
 
-				// let div = d3.select("#tooltip");
-				// div.transition()
-				// 	.duration(500)
-				// 	.style("opacity", 0);
+				// d3.select("#tooltip").style("visibility", "hidden");
 			})
 			.on("click", function (d) {
 				d3.select("#country_name").text("");
