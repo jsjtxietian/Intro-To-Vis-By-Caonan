@@ -8,7 +8,8 @@ import './D3.css'
 //3. change tooptip
 
 const Countries = ["Asia", "Europe", "Africa", "SouthAmerica", "Oceania", "NorthAmerica"];
-const Duration = 500;
+const AxisDuration = 500;
+const CircleDuration = 1000;
 
 class D3 extends Component {
 
@@ -125,10 +126,16 @@ class D3 extends Component {
 				.attr("y", 18);
 		}
 		else {
-			d3.selectAll("#xaxis").transition().duration(Duration).call(xAxis);
-			d3.selectAll("#yaxis").transition().duration(Duration).call(yAxis);
-			d3.select("#xAxisText").transition().duration(Duration).text(x);
-			d3.select("#yAxisText").transition().duration(Duration).text(y);
+			d3.selectAll("#xaxis").transition().duration(AxisDuration).call(xAxis);
+			d3.selectAll("#yaxis").transition().duration(AxisDuration).call(yAxis);
+
+			if (x === "Population")
+				x = "Population(*10^4)";
+			if (y === "Population")
+				y = "Population(*10^4)";
+				
+			d3.select("#xAxisText").transition().duration(AxisDuration).text(x);
+			d3.select("#yAxisText").transition().duration(AxisDuration).text(y);
 		}
 
 	}
@@ -162,14 +169,15 @@ class D3 extends Component {
 				.attr("cy", (d) => { return this.state.yScale(d[y]) })
 				.attr("r", 5);
 		}
-		else{
+		else {
 			d3.selectAll("circle")
-			.data(this.props.data, function (d) { return d["Country"] })
-			.transition()
-			.duration(Duration)
-			.delay(Duration)
-			.attr("cx",(d) => this.state.xScale(d[x]))
-			.attr("cy",(d) => this.state.yScale(d[y]));
+				.data(this.props.data, function (d) { return d["Country"] })
+				.transition()
+				.duration(CircleDuration)
+				.ease(d3.easeElastic)
+				.delay(AxisDuration)
+				.attr("cx", (d) => this.state.xScale(d[x]))
+				.attr("cy", (d) => this.state.yScale(d[y]));
 		}
 	}
 

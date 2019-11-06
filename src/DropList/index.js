@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './DropList.css'
-import { Menu, Dropdown, Icon, message } from 'antd';
+import { Menu, Dropdown, Icon } from 'antd';
 import 'antd/dist/antd.css';
 
 class DropDemension extends Component {
@@ -12,7 +12,6 @@ class DropDemension extends Component {
 		}
 
 		this.onClick = ({ key }) => {
-			// message.info(`Click on item ${key}`);
 			this.props.setAppKey(key,this.props.pos);
 			this.setState({
 				currentKey: key,
