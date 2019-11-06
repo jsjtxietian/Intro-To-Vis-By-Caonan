@@ -5,13 +5,14 @@ import './D3.css'
 //todo
 //1. do not change state directly 
 //2. convert to hooks
-//3. change tooptip
+//3. change tooptip 
 
 const Countries = ["Asia", "Europe", "Africa", "SouthAmerica", "Oceania", "NorthAmerica"];
 const AxisDuration = 500;
 const CircleDuration = 1000;
 const EnlargeDuration = 300;
 const normalOpacity = 0.7;
+const zoomRatio = [1, 10];
 
 class D3 extends Component {
 
@@ -32,11 +33,13 @@ class D3 extends Component {
 		this.drawAxes = this.drawAxes.bind(this);
 		this.beautify = this.beautify.bind(this);
 		this.bindEvents = this.bindEvents.bind(this);
+		this.enableZoom = this.enableZoom.bind(this);
 	}
 
 	drawAll(d) {
 		this.createSVG();
 		this.drawAxes(this.props.x_attr, this.props.y_attr);
+		this.enableZoom(this.props.x_attr, this.props.y_attr);
 		this.drawDataPoints(this.props.x_attr, this.props.y_attr);
 		this.beautify();
 		this.bindEvents();
@@ -142,15 +145,55 @@ class D3 extends Component {
 
 	}
 
-	createSVG() {
+
+
+	enableZoom(x, y) {
 		if (this.state.isFirst) {
-			d3.select(this.refs.main_div)
-				.append("svg")
-				.attr("width", "100%")
-				.attr("height", "100%")
-				.attr("id", "main_svg");
+			// Add a clipPath: everything out of this area won't be drawn.
+			d3.select("#main_svg")
+				.append("defs")
+				.append("SVG:clipPath")
+				.attr("id", "clip")
+				.append("SVG:rect")
+				.attr("width", this.state.size[0])
+				.attr("height", this.state.size[1])
+				.attr("x", this.state.xBias)
+				.attr("y", 0);
+
+			d3.select("#plots").attr("clip-path", "url(#clip)");
+
+			let updateChart = () => {
+				// recover the new scale
+				let newX = d3.event.transform.rescaleX(this.state.xScale);
+				let newY = d3.event.transform.rescaleY(this.state.yScale);
+				// update axes with these new boundaries
+				d3.select("#xaxis").call(d3.axisBottom().scale(newX));
+				d3.select("#yaxis").call(d3.axisLeft().scale(newY));
+				// this.state.xScale = newX;
+				// this.state.yScale = newY;
+
+				// update circle position
+				d3.selectAll("circle")
+					.data(this.props.data, function (d) { return d["Country"] })
+					.attr("cx", (d) => { return newX(d[x]) })
+					.attr("cy", (d) => { return newY(d[y]) })
+					.attr("r", 5);
+			}
+
+			let zoom = d3.zoom()
+				.scaleExtent(zoomRatio)  // This control how much you can unzoom (x0.5) and zoom (x20)
+				.extent([[0, 0], this.state.size])
+				.on("zoom", updateChart);
+
+			d3.select("#main_svg").append("rect")
+				.attr("width", this.state.size[0])
+				.attr("height", this.state.size[1])
+				.style("fill", "none")
+				.style("pointer-events", "all") 
+				.attr('transform', 'translate(' + this.state.xBias + ',' + 0 + ')')
+				.call(zoom);
 		}
-	};
+	}
 
 	drawDataPoints(x, y) {
 
@@ -158,7 +201,8 @@ class D3 extends Component {
 			/**create container for points */
 			let plot = d3.select("#main_svg")
 				.append("g")
-				.attr("id", "plots");
+				.attr("id", "plots")
+				.attr("clip-path", "url(#clip)");
 
 			/**initiate data binding */
 			let plotEnter = plot.selectAll("circle")
@@ -214,6 +258,7 @@ class D3 extends Component {
 					.attr("width", 20)
 					.attr("height", 15)
 					.style("fill", this.state.color(i))
+					.style("opacity", normalOpacity)
 					.attr("id", i)
 					.attr("class", "legend");
 			}
@@ -244,7 +289,9 @@ class D3 extends Component {
 					.text(d['Country'])
 					.attr("x", xScale(d[x]))
 					.attr("y", yScale(d[y]) - 10);
-
+				// .style("top", d3.event.pageX + "px")
+				// .style("left",  + d3.event.pageX + "px");
+				// console.log(d3.event.pageX);
 				d3.select(this).transition()
 					.ease(d3.easeElastic)
 					.duration(EnlargeDuration)
@@ -274,6 +321,15 @@ class D3 extends Component {
 
 	}
 
+	createSVG() {
+		if (this.state.isFirst) {
+			d3.select(this.refs.main_div)
+				.append("svg")
+				.attr("width", "100%")
+				.attr("height", "100%")
+				.attr("id", "main_svg");
+		}
+	};
 
 	componentDidMount() {
 		this.drawAll(this.props.data);
