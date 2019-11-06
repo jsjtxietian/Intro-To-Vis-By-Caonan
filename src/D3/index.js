@@ -11,6 +11,7 @@ const Countries = ["Asia", "Europe", "Africa", "SouthAmerica", "Oceania", "North
 const AxisDuration = 500;
 const CircleDuration = 1000;
 const EnlargeDuration = 300;
+const normalOpacity = 0.7;
 
 class D3 extends Component {
 
@@ -196,7 +197,8 @@ class D3 extends Component {
 		if (this.state.isFirst) {
 			/**distinguish data points by color */
 			d3.selectAll("circle")
-				.style("fill", (d) => { return this.state.color(this.getRegionIndex(d["Region"])) });
+				.style("fill", (d) => { return this.state.color(this.getRegionIndex(d["Region"])) })
+				.style("opacity", normalOpacity);
 
 			for (let i = 0; i < Countries.length; i++) {
 				d3.select("#main_svg")
@@ -225,6 +227,12 @@ class D3 extends Component {
 			d3.select("#plots")
 				.append("text")
 				.attr("id", "country_name");
+
+			// d3.select("#main_svg")
+			// 	.append("div")
+			// 	.attr("id", "tooltip")
+			// 	.style("opacity", 0)
+			// 	.html("tooptip");
 		}
 		let x = this.props.x_attr;
 		let y = this.props.y_attr;
@@ -241,7 +249,16 @@ class D3 extends Component {
 				d3.select(this).transition()
 					.ease(d3.easeElastic)
 					.duration(EnlargeDuration)
-					.attr("r", 10);
+					.attr("r", 10)
+					.style("opacity", 1);
+
+				// let div = d3.select("#tooltip");
+				// div.transition()
+				// 	.duration(200)
+				// 	.style("opacity", 0.9);
+				// div.html(d['Country'])
+				// 	.style("left", (d3.event.pageX) + "px")
+				// 	.style("top", (d3.event.pageY - 28) + "px");
 			})
 			.on("mouseout", function (d) {
 				d3.select("#country_name").text("");
@@ -249,7 +266,13 @@ class D3 extends Component {
 				d3.select(this).transition()
 					.ease(d3.easeElastic)
 					.duration(EnlargeDuration)
-					.attr("r", 5);
+					.attr("r", 5)
+					.style("opacity", normalOpacity);
+
+				// let div = d3.select("#tooltip");
+				// div.transition()
+				// 	.duration(500)
+				// 	.style("opacity", 0);
 			})
 			.on("click", function (d) {
 				d3.select("#country_name").text("");
