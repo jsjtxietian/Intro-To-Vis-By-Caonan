@@ -162,37 +162,38 @@ class D3 extends Component {
 
 			d3.select("#plots").attr("clip-path", "url(#clip)");
 
-			let updateChart = () => {
-				// recover the new scale
-				let newX = d3.event.transform.rescaleX(this.state.xScale);
-				let newY = d3.event.transform.rescaleY(this.state.yScale);
-				// update axes with these new boundaries
-				d3.select("#xaxis").call(d3.axisBottom().scale(newX));
-				d3.select("#yaxis").call(d3.axisLeft().scale(newY));
-				// this.state.xScale = newX;
-				// this.state.yScale = newY;
-
-				// update circle position
-				d3.selectAll("circle")
-					.data(this.props.data, function (d) { return d["Country"] })
-					.attr("cx", (d) => { return newX(d[x]) })
-					.attr("cy", (d) => { return newY(d[y]) })
-					.attr("r", 5);
-			}
-
-			let zoom = d3.zoom()
-				.scaleExtent(zoomRatio)  // This control how much you can unzoom (x0.5) and zoom (x20)
-				.extent([[0, 0], this.state.size])
-				.on("zoom", updateChart);
-
 			d3.select("#main_svg").append("rect")
 				.attr("width", this.state.size[0])
 				.attr("height", this.state.size[1])
 				.style("fill", "none")
-				.style("pointer-events", "all") 
+				.style("pointer-events", "all")
 				.attr('transform', 'translate(' + this.state.xBias + ',' + 0 + ')')
-				.call(zoom);
+				.attr("id", "zoomRect");
 		}
+		let updateChart = () => {
+			// recover the new scale
+			let newX = d3.event.transform.rescaleX(this.state.xScale);
+			let newY = d3.event.transform.rescaleY(this.state.yScale);
+			// update axes with these new boundaries
+			d3.select("#xaxis").call(d3.axisBottom().scale(newX));
+			d3.select("#yaxis").call(d3.axisLeft().scale(newY));
+
+			// update circle position
+			d3.selectAll("circle")
+				.data(this.props.data, function (d) { return d["Country"] })
+				.attr("cx", (d) => { return newX(d[x]) })
+				.attr("cy", (d) => { return newY(d[y]) })
+				.attr("r", 5);
+		}
+
+		let zoom = d3.zoom()
+			.scaleExtent(zoomRatio)  // This control how much you can unzoom (x0.5) and zoom (x20)
+			.extent([[0, 0], this.state.size])
+			.on("zoom", updateChart);
+
+
+		d3.select("#zoomRect").call(zoom);
+
 	}
 
 	drawDataPoints(x, y) {
@@ -289,19 +290,12 @@ class D3 extends Component {
 					.text(d['Country'])
 					.attr("x", xScale(d[x]))
 					.attr("y", yScale(d[y]) - 10);
-				// .style("top", d3.event.pageX + "px")
-				// .style("left",  + d3.event.pageX + "px");
-				// console.log(d3.event.pageX);
 				d3.select(this).transition()
 					.ease(d3.easeElastic)
 					.duration(EnlargeDuration)
 					.attr("r", 10)
 					.style("opacity", 1);
 
-				// d3.select("#tooltip")
-				// 	.style("visibility", "visible")
-				// 	.style("top", (d3.mouse(this)[1]) + "px")
-				// 	.style("left", (d3.mouse(this)[0]) + "px");
 			})
 			.on("mouseout", function (d) {
 				d3.select("#country_name").text("");
@@ -312,7 +306,6 @@ class D3 extends Component {
 					.attr("r", 5)
 					.style("opacity", normalOpacity);
 
-				// d3.select("#tooltip").style("visibility", "hidden");
 			})
 			.on("click", function (d) {
 				d3.select("#country_name").text("");

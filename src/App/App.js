@@ -59,8 +59,6 @@ class App extends Component {
 
 		keyName.splice(0, 2);
 		
-		// keyName[keyName.indexOf("Population")] = "Population(*10^4)";
-
 		//population / 10000
 		rawData.map((s) => {
 			for (var key in s) {
