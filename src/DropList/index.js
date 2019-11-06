@@ -32,7 +32,7 @@ class DropDemension extends Component {
 
 		return (
 			<>
-			<a className="AxisFont">Select {this.props.pos}-axis Variable </a>
+			<p className="AxisFont">Select {this.props.pos}-axis Variable </p>
 			<Dropdown overlay={this.menu} className="AxisDropDown">
 				<a className="ant-dropdown-link" href="#">
 					{this.state.currentKey} <Icon type="down" />

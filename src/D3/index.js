@@ -10,6 +10,7 @@ import './D3.css'
 const Countries = ["Asia", "Europe", "Africa", "SouthAmerica", "Oceania", "NorthAmerica"];
 const AxisDuration = 500;
 const CircleDuration = 1000;
+const EnlargeDuration = 300;
 
 class D3 extends Component {
 
@@ -183,7 +184,7 @@ class D3 extends Component {
 
 	getRegionIndex = (strRegion) => {
 		for (let i = 0; i < Countries.length; i++) {
-			if (strRegion.indexOf(Countries[i]) != -1) {
+			if (strRegion.indexOf(Countries[i]) !== -1) {
 				return i;
 			}
 		}
@@ -225,19 +226,32 @@ class D3 extends Component {
 				.append("text")
 				.attr("id", "country_name");
 
+			let x = this.props.x_attr;
+			let y = this.props.y_attr;
+			let xScale = this.state.xScale;
+			let yScale = this.state.yScale;
+			
 			d3.selectAll("circle")
-				.on("mouseover", (d) => {
-					/*move and set name tag */
+				.on("mouseover", function(d)  {
 					d3.select("#country_name")
 						.text(d['Country'])
-						.attr("x", this.state.xScale(d[this.props.x_attr]))
-						.attr("y", this.state.yScale(d[this.props.y_attr]) - 10);
+						.attr("x", xScale(d[x]))
+						.attr("y", yScale(d[y]) - 10);
+
+					d3.select(this).transition()
+						.ease(d3.easeElastic)
+						.duration(EnlargeDuration)
+						.attr("r", 10);
 				})
 				.on("mouseout", function (d) {
 					d3.select("#country_name").text("");
+
+					d3.select(this).transition()
+						.ease(d3.easeElastic)
+						.duration(EnlargeDuration)
+						.attr("r", 5);
 				})
 				.on("click", function (d) {
-
 					d3.select("#country_name").text("");
 					d3.select(this).remove();
 				})

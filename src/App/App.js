@@ -64,7 +64,7 @@ class App extends Component {
 		//population / 10000
 		rawData.map((s) => {
 			for (var key in s) {
-				if(key == "Population"){
+				if(key === "Population"){
 					s[key] = parseInt(s[key])/10000 + "";
 				}
 			}

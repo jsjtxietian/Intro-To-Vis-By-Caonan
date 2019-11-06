@@ -2,6 +2,7 @@
     color: black;
     font-weight: bold;
     font-size: 18pt;
+    white-space:nowrap;
 }
 
 .AxisDropDown{
