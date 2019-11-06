@@ -134,7 +134,7 @@ class D3 extends Component {
 				x = "Population(*10^4)";
 			if (y === "Population")
 				y = "Population(*10^4)";
-				
+
 			d3.select("#xAxisText").transition().duration(AxisDuration).text(x);
 			d3.select("#yAxisText").transition().duration(AxisDuration).text(y);
 		}
@@ -225,38 +225,37 @@ class D3 extends Component {
 			d3.select("#plots")
 				.append("text")
 				.attr("id", "country_name");
-
-			let x = this.props.x_attr;
-			let y = this.props.y_attr;
-			let xScale = this.state.xScale;
-			let yScale = this.state.yScale;
-			
-			d3.selectAll("circle")
-				.on("mouseover", function(d)  {
-					d3.select("#country_name")
-						.text(d['Country'])
-						.attr("x", xScale(d[x]))
-						.attr("y", yScale(d[y]) - 10);
-
-					d3.select(this).transition()
-						.ease(d3.easeElastic)
-						.duration(EnlargeDuration)
-						.attr("r", 10);
-				})
-				.on("mouseout", function (d) {
-					d3.select("#country_name").text("");
-
-					d3.select(this).transition()
-						.ease(d3.easeElastic)
-						.duration(EnlargeDuration)
-						.attr("r", 5);
-				})
-				.on("click", function (d) {
-					d3.select("#country_name").text("");
-					d3.select(this).remove();
-				})
-
 		}
+		let x = this.props.x_attr;
+		let y = this.props.y_attr;
+		let xScale = this.state.xScale;
+		let yScale = this.state.yScale;
+
+		d3.selectAll("circle")
+			.on("mouseover", function (d) {
+				d3.select("#country_name")
+					.text(d['Country'])
+					.attr("x", xScale(d[x]))
+					.attr("y", yScale(d[y]) - 10);
+
+				d3.select(this).transition()
+					.ease(d3.easeElastic)
+					.duration(EnlargeDuration)
+					.attr("r", 10);
+			})
+			.on("mouseout", function (d) {
+				d3.select("#country_name").text("");
+
+				d3.select(this).transition()
+					.ease(d3.easeElastic)
+					.duration(EnlargeDuration)
+					.attr("r", 5);
+			})
+			.on("click", function (d) {
+				d3.select("#country_name").text("");
+				d3.select(this).remove();
+			})
+
 	}
 
 
