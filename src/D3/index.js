@@ -5,14 +5,15 @@ import './D3.css'
 //todo
 //1. do not change state directly 
 //2. convert to hooks
-//3. change tooptip 
+//3. change tooltip 
+//4. axis problem(0-max,min-max)
 
 const Countries = ["Asia", "Europe", "Africa", "SouthAmerica", "Oceania", "NorthAmerica"];
 const AxisDuration = 500;
 const CircleDuration = 1000;
 const EnlargeDuration = 300;
 const normalOpacity = 0.7;
-const zoomRatio = [1, 10];
+const zoomRatio = [0.1, 10];
 
 class D3 extends Component {
 
@@ -25,7 +26,8 @@ class D3 extends Component {
 			xBias: 60,
 			xScale: null,
 			yScale: null,
-			isFirst: true
+			isFirst: true,
+			zoom : null
 		};
 
 		this.drawAll = this.drawAll.bind(this);
@@ -145,8 +147,6 @@ class D3 extends Component {
 
 	}
 
-
-
 	enableZoom(x, y) {
 		if (this.state.isFirst) {
 			// Add a clipPath: everything out of this area won't be drawn.
@@ -180,20 +180,18 @@ class D3 extends Component {
 
 			// update circle position
 			d3.selectAll("circle")
-				.data(this.props.data, function (d) { return d["Country"] })
 				.attr("cx", (d) => { return newX(d[x]) })
 				.attr("cy", (d) => { return newY(d[y]) })
 				.attr("r", 5);
 		}
 
-		let zoom = d3.zoom()
+		this.state.zoom = d3.zoom()
 			.scaleExtent(zoomRatio)  // This control how much you can unzoom (x0.5) and zoom (x20)
-			.extent([[0, 0], this.state.size])
+			.extent([[this.state.xBias, 0], this.state.size])
 			.on("zoom", updateChart);
 
 
-		d3.select("#zoomRect").call(zoom);
-
+		d3.select("#zoomRect").call(this.state.zoom);
 	}
 
 	drawDataPoints(x, y) {
@@ -218,7 +216,6 @@ class D3 extends Component {
 		}
 		else {
 			d3.selectAll("circle")
-				.data(this.props.data, function (d) { return d["Country"] })
 				.transition()
 				.duration(CircleDuration)
 				.ease(d3.easeElastic)
@@ -274,10 +271,6 @@ class D3 extends Component {
 				.append("text")
 				.attr("id", "country_name");
 
-			// d3.select("#main_svg")
-			// 	.append("div")
-			// 	.attr("id", "tooltip")
-			// 	.html("<p>tooltip</p>");
 		}
 		let x = this.props.x_attr;
 		let y = this.props.y_attr;
@@ -295,7 +288,6 @@ class D3 extends Component {
 					.duration(EnlargeDuration)
 					.attr("r", 10)
 					.style("opacity", 1);
-
 			})
 			.on("mouseout", function (d) {
 				d3.select("#country_name").text("");
@@ -305,7 +297,6 @@ class D3 extends Component {
 					.duration(EnlargeDuration)
 					.attr("r", 5)
 					.style("opacity", normalOpacity);
-
 			})
 			.on("click", function (d) {
 				d3.select("#country_name").text("");
@@ -330,6 +321,7 @@ class D3 extends Component {
 	}
 
 	componentDidUpdate(prevProps, prevState) {
+		this.state.zoom.transform(d3.select("#zoomRect"), d3.zoomIdentity);
 		this.drawAll(this.props.data);
 	}
 
