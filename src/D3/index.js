@@ -7,6 +7,15 @@ import './D3.css'
 //2. convert to hooks
 //3. change tooltip 
 //4. axis problem(0-max,min-max)
+//5. todo bug axis
+
+//libya db
+//uganda inin
+//nicara oman dd
+//kara      bb
+//russia bb
+//rawanda cc
+//estonia latvia bb
 
 const Countries = ["Asia", "Europe", "Africa", "SouthAmerica", "Oceania", "NorthAmerica"];
 const AxisDuration = 500;
