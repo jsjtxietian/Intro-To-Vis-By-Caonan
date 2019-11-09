@@ -7,15 +7,6 @@ import './D3.css'
 //2. convert to hooks
 //3. change tooltip 
 //4. axis problem(0-max,min-max)
-//5. todo bug axis
-
-//libya db
-//uganda inin
-//nicara oman dd
-//kara      bb
-//russia bb
-//rawanda cc
-//estonia latvia bb
 
 const Countries = ["Asia", "Europe", "Africa", "SouthAmerica", "Oceania", "NorthAmerica"];
 const AxisDuration = 500;
@@ -24,10 +15,22 @@ const EnlargeDuration = 300;
 const normalOpacity = 0.7;
 const zoomRatio = [0.1, 10];
 
+
 class D3 extends Component {
 
 	constructor(props) {
 		super(props);
+
+		this.drawAll = this.drawAll.bind(this);
+		this.createSVG = this.createSVG.bind(this);
+		this.drawAxes = this.drawAxes.bind(this);
+		this.beautify = this.beautify.bind(this);
+		this.bindEvents = this.bindEvents.bind(this);
+		this.enableZoom = this.enableZoom.bind(this);
+		this.GroupByRegion = this.GroupByRegion.bind(this);
+		this.savePos = this.savePos.bind(this);
+
+		let group = this.GroupByRegion();
 
 		this.state = {
 			size: [600, 600],
@@ -36,24 +39,80 @@ class D3 extends Component {
 			xScale: null,
 			yScale: null,
 			isFirst: true,
-			zoom : null
+			zoom: null,
+			mean: group.cluster,
+			regions: group.regionSets,
+			oldPos: group.oldPos,
+			newPos: group.newPos
 		};
 
-		this.drawAll = this.drawAll.bind(this);
-		this.createSVG = this.createSVG.bind(this);
-		this.drawAxes = this.drawAxes.bind(this);
-		this.beautify = this.beautify.bind(this);
-		this.bindEvents = this.bindEvents.bind(this);
-		this.enableZoom = this.enableZoom.bind(this);
+	}
+
+	GroupByRegion() {
+
+		let regionSets = new Set();
+
+		this.props.data.map(
+			(d) => {
+				regionSets.add(d["Region"]);
+			}
+		)
+
+		let cluster = new Map();
+		let oldPos = new Map();
+		let newPos = new Map();
+
+		for (let key of regionSets) {
+			let values = this.props.data.filter((d) => {
+				return d["Region"] == key;
+			});
+
+			cluster[key] = new Map();
+			oldPos[key] = { x: 0, y: 0 };
+
+			this.props.keyName.map((attr) => {
+				let sum = 0;
+				for (let s in values) {
+					sum += parseFloat(values[s][attr]);
+				}
+				cluster[key][attr] = sum / values.length;
+			});
+		}
+
+		return { cluster, regionSets, oldPos, newPos };
+	}
+
+	//0 old 
+	//1 new
+	savePos(type) {
+		if (type == 0) {
+			for (let key of this.state.regions) {
+				this.state.oldPos[key] = {
+					x: this.state.xScale(this.state.mean[key][this.props.x_attr]),
+					y: this.state.yScale(this.state.mean[key][this.props.y_attr]),
+				}
+			}
+		}
+		else {
+			for (let key of this.state.regions) {
+				this.state.newPos[key] = {
+					x: this.state.xScale(this.state.mean[key][this.props.x_attr]),
+					y: this.state.yScale(this.state.mean[key][this.props.y_attr]),
+				}
+			}
+		}
+		// console.log(this.state.oldPos);
 	}
 
 	drawAll(d) {
 		this.createSVG();
 		this.drawAxes(this.props.x_attr, this.props.y_attr);
+		this.savePos(1);
 		this.enableZoom(this.props.x_attr, this.props.y_attr);
 		this.drawDataPoints(this.props.x_attr, this.props.y_attr);
 		this.beautify();
 		this.bindEvents();
+		this.savePos(0);
 	};
 
 	//axis "x" / "y"
@@ -224,13 +283,39 @@ class D3 extends Component {
 				.attr("r", 5);
 		}
 		else {
-			d3.selectAll("circle")
-				.transition()
-				.duration(CircleDuration)
-				.ease(d3.easeElastic)
-				.delay(AxisDuration)
-				.attr("cx", (d) => this.state.xScale(d[x]))
-				.attr("cy", (d) => this.state.yScale(d[y]));
+			// d3.selectAll("circle")
+			// 	.transition()
+			// 	.duration(CircleDuration)
+			// 	.ease(d3.easeElastic)
+			// 	.delay(AxisDuration)
+			// 	.attr("cx", (d) => this.state.xScale(d[x]))
+			// 	.attr("cy", (d) => this.state.yScale(d[y]));
+			for (let key of this.state.regions) {
+				d3.selectAll("circle")
+					.filter((d) => d["Region"] == key)
+					
+					//to old mean
+					.transition()
+					.delay(AxisDuration)
+					.duration(CircleDuration)
+					// .ease(d3.easeElastic)
+					.attr("cx", this.state.oldPos[key].x)
+					.attr("cy", this.state.oldPos[key].y)
+
+					//to new mean
+					.transition()
+					.duration(CircleDuration)
+					// .ease(d3.easeElastic)
+					.attr("cx", this.state.newPos[key].x)
+					.attr("cy", this.state.newPos[key].y)
+
+					//to last
+					.transition()
+					.duration(CircleDuration)
+					// .ease(d3.easeElastic)
+					.attr("cx", (d) => this.state.xScale(d[x]))
+					.attr("cy", (d) => this.state.yScale(d[y]));
+			}
 		}
 	}
 

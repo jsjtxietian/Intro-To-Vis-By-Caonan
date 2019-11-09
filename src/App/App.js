@@ -82,7 +82,7 @@ class App extends Component {
 				<p className="title">
 					This is the scatterpot of <strong>{this.state.leftKey}</strong> and <strong>{this.state.rightKey} </strong>
 				</p>
-				<D3 x_attr={this.state.leftKey} y_attr={this.state.rightKey} data={this.state.data}>
+				<D3 x_attr={this.state.leftKey} keyName={this.state.keyName} y_attr={this.state.rightKey} data={this.state.data}>
 				</D3>
 				<div className="Axis">
 				<DropDemension keyName={this.state.keyName} another={this.state.rightKey} current={this.state.leftKey} pos="X" setAppKey={this.changeKey}/>
