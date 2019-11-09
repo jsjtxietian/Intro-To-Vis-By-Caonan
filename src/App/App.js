@@ -16,8 +16,8 @@ class App extends Component {
 			data: null,
 			keyName: null,
 			dataLoaded: false,
-			leftKey :"Birth Rate",
-			rightKey : "Death Rate",
+			leftKey: "Birth Rate",
+			rightKey: "Death Rate",
 		};
 
 		this.cleanData = this.cleanData.bind(this);
@@ -31,16 +31,21 @@ class App extends Component {
 		});
 	}
 
-	changeKey(key,pos){
-		if(pos === "X"){
-			this.setState({
-				leftKey:key
-			})
+	changeKey(key, pos) {
+		if (pos === "X") {
+			if (key !== this.state.leftKey) {
+				this.setState({
+					leftKey: key
+				})
+			}
 		}
-		else{
-			this.setState({
-				rightKey:key
-			})
+		else {
+			if (key !== this.state.rightKey) {
+				this.setState({
+					rightKey: key
+				});
+			}
+
 		}
 	}
 
@@ -58,12 +63,12 @@ class App extends Component {
 		}
 
 		keyName.splice(0, 2);
-		
+
 		//population / 10000
 		rawData.map((s) => {
 			for (var key in s) {
-				if(key === "Population"){
-					s[key] = parseInt(s[key])/10000 + "";
+				if (key === "Population") {
+					s[key] = parseInt(s[key]) / 10000 + "";
 				}
 			}
 		});
@@ -85,8 +90,8 @@ class App extends Component {
 				<D3 x_attr={this.state.leftKey} keyName={this.state.keyName} y_attr={this.state.rightKey} data={this.state.data}>
 				</D3>
 				<div className="Axis">
-				<DropDemension keyName={this.state.keyName} another={this.state.rightKey} current={this.state.leftKey} pos="X" setAppKey={this.changeKey}/>
-				<DropDemension keyName={this.state.keyName} another={this.state.leftKey} current={this.state.rightKey} pos="Y"setAppKey={this.changeKey} />
+					<DropDemension keyName={this.state.keyName} another={this.state.rightKey} current={this.state.leftKey} pos="X" setAppKey={this.changeKey} />
+					<DropDemension keyName={this.state.keyName} another={this.state.leftKey} current={this.state.rightKey} pos="Y" setAppKey={this.changeKey} />
 				</div>
 			</>
 			);

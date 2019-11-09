@@ -8,6 +8,17 @@
   margin: 0 auto;
 }
 
+.tooltip{
+  position: absolute;
+  background: white;
+  border: solid;
+  border-width: 1px;
+  border-radius: 5px;
+  padding: 5px;
+  visibility: hidden;
+  opacity: 0.9;
+  text-align: left;
+}
 
 .axis text{
   fill:black;

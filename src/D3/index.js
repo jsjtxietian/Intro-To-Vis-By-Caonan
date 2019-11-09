@@ -293,7 +293,7 @@ class D3 extends Component {
 			for (let key of this.state.regions) {
 				d3.selectAll("circle")
 					.filter((d) => d["Region"] == key)
-					
+
 					//to old mean
 					.transition()
 					.delay(AxisDuration)
@@ -361,11 +361,14 @@ class D3 extends Component {
 	bindEvents() {
 		if (this.state.isFirst) {
 			/*Display Name on Hover*/
-			d3.select("#plots")
-				.append("text")
-				.attr("id", "country_name");
-
+			// d3.select("#plots")
+			// 	.append("text")
+			// 	.attr("id", "country_name");
+			d3.select(this.refs.main_div)
+				.append("div")
+				.attr("class", "tooltip");
 		}
+
 		let x = this.props.x_attr;
 		let y = this.props.y_attr;
 		let xScale = this.state.xScale;
@@ -373,24 +376,32 @@ class D3 extends Component {
 
 		d3.selectAll("circle")
 			.on("mouseover", function (d) {
-				d3.select("#country_name")
-					.text(d['Country'])
-					.attr("x", xScale(d[x]))
-					.attr("y", yScale(d[y]) - 10);
+				// d3.select("#country_name")
+				// 	.text(d['Country'])
+				// 	.attr("x", xScale(d[x]))
+				// 	.attr("y", yScale(d[y]) - 10);
 				d3.select(this).transition()
 					.ease(d3.easeElastic)
 					.duration(EnlargeDuration)
 					.attr("r", 10)
 					.style("opacity", 1);
+
+				d3.select(".tooltip")
+					.html(`<b>${d['Country']}</b><br>${x}:${d[x]}<br>${y}:${d[y]}`)	
+					.style("visibility", "visible")
+					.style("left", (d3.event.pageX) + "px")
+					.style("top", (d3.event.pageY + 28) + "px");
 			})
 			.on("mouseout", function (d) {
-				d3.select("#country_name").text("");
+				// d3.select("#country_name").text("");
 
 				d3.select(this).transition()
 					.ease(d3.easeElastic)
 					.duration(EnlargeDuration)
 					.attr("r", 5)
 					.style("opacity", normalOpacity);
+
+				d3.select(".tooltip").style("visibility", "hidden");
 			})
 			.on("click", function (d) {
 				d3.select("#country_name").text("");
