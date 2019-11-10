@@ -5,8 +5,6 @@ import './D3.css'
 //todo
 //1. do not change state directly 
 //2. convert to hooks
-//3. change tooltip 
-//4. axis problem(0-max,min-max)
 
 const Countries = ["Asia", "Europe", "Africa", "SouthAmerica", "Oceania", "NorthAmerica"];
 const AxisDuration = 500;
@@ -406,6 +404,8 @@ class D3 extends Component {
 			.on("click", function (d) {
 				d3.select("#country_name").text("");
 				d3.select(this).remove();
+				d3.select(".tooltip").style("visibility", "hidden");
+
 			})
 
 	}
