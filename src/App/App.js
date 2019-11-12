@@ -85,7 +85,7 @@ class App extends Component {
 		if (this.state.dataLoaded) {
 			return (<>
 				<p className="title">
-					This is the scatterpot of <strong>{this.state.leftKey}</strong> and <strong>{this.state.rightKey} </strong>
+					The scatterpot of <strong>{this.state.leftKey}</strong> and <strong>{this.state.rightKey} </strong>
 				</p>
 				<D3 x_attr={this.state.leftKey} keyName={this.state.keyName} y_attr={this.state.rightKey} data={this.state.data}>
 				</D3>
